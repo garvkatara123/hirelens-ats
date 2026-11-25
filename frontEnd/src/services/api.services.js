@@ -1,4 +1,4 @@
-const API_BASE = "https://6afed362b55b64cccb2da18b-api-capstone.myanatomy.ai";
+const API_BASE = "https://hirelens-ats-6.onrender.com";
 async function request(path, options = {}) {
   const url = path.startsWith('http') ? path : `${API_BASE}${path}`;
   let response;
