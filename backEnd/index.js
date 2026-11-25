@@ -20,16 +20,26 @@ app.disable('x-powered-by');
 app.use(securityHeaders);
 
 // CORS configuration for local and configured client origins
-const allowedOrigins = (process.env.CLIENT_ORIGIN || 'http://localhost:3000,http://127.0.0.1:3000')
+const envOrigins = (process.env.CLIENT_ORIGIN || '')
   .split(',')
-  .map(o => o.trim())
+  .map(o => o.trim().replace(/^["']|["']$/g, '').replace(/\/+$/, ''))
   .filter(Boolean);
+
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'https://hirelens-ats.vercel.app',
+  ...envOrigins
+];
 
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
     if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+      return callback(null, true);
+    }
+    if (/^https:\/\/hirelens-.*\.vercel\.app$/.test(origin)) {
       return callback(null, true);
     }
     return callback(new Error(`CORS blocked for origin: ${origin}`));
